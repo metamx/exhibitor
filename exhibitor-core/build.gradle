@@ -16,13 +16,19 @@ dependencies {
     compile "javax.ws.rs:jsr311-api:${jaxRsVersion}"
     compile "org.codehaus.jackson:jackson-mapper-asl:${jacksonVersion}"
     compile "org.apache.lucene:lucene-core:${luceneVersion}"
-    
+
     compile "com.sun.jersey:jersey-client:${jerseyVersion}"
 
     // if you are using Java 7 you can remove this and switch to the JDK version
     compile 'org.codehaus.jsr166-mirror:jsr166y:1.7.0'
 
-    compile "com.amazonaws:aws-java-sdk:${awsVersion}"
+    compile("com.amazonaws:aws-java-sdk:${awsVersion}") {
+      // remove joda-time dependency from aws-java-sdk because of non-deterministic
+      // dependent version
+      exclude group: 'joda-time', module: 'joda-time'
+    }
+    // added a fixed version of joda-time
+    compile "joda-time:joda-time:${jodaTimeVersion}"
     compile "com.sun.jersey:jersey-core:${jerseyVersion}"
     compile "com.sun.jersey:jersey-server:${jerseyVersion}"
     compile "com.sun.jersey:jersey-json:${jerseyVersion}"
