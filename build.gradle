@@ -1,42 +1,26 @@
 plugins {
     id 'nebula.netflixoss' version '2.2.5'
     id 'nebula.provided-base' version '2.0.1'
+    id "net.linguica.maven-settings" version "0.5"
 }
 
 ext.githubProjectName = rootProject.name // Change if github project name is not the same as the root project's name
 
+license {
+    ignoreFailures = true
+}
+
 subprojects {
     apply plugin: 'nebula.netflixoss'
     apply plugin: 'java'
+    apply plugin: 'net.linguica.maven-settings'
 
     group = "com.netflix.${githubProjectName}" // TEMPLATE: Set to organization of project
 
     repositories {
-        File settingsFile = new File(m2SettingsFile.replace('~', System.env.HOME.toString()))
-        if (settingsFile.isFile()) {
-            println "Detected m2 settings file: ${settingsFile}"
-            def settings = new XmlSlurper().parse(settingsFile)
-            def profiles = settings.activeProfiles.activeProfile
-            for (profile in profiles) {
-                def repos = settings.profiles.profile.find {
-                    p -> p.id.text() == profile.text()
-                }.repositories.repository
-                for (repo in repos) {
-                    def server = settings.servers.server.find {
-                        s -> s.id.text() == repo.id.text()
-                    }
-                    maven {
-                        credentials {
-                            username server.username.text()
-                            password server.password.text()
-                        }
-                        url repo.url.text()
-                    }
-                }
-            }
-        } else {
-            println 'No m2 settings detected'
-            jcenter()
+        maven {
+          name repoName
+          url repoUrl
         }
     }
 
