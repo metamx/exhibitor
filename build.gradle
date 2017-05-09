@@ -18,9 +18,13 @@ subprojects {
     group = "com.netflix.${githubProjectName}" // TEMPLATE: Set to organization of project
 
     repositories {
-        maven {
-          name repoName
-          url repoUrl
+        if (project.hasProperty("repoName") && project.hasProperty("repoUrl")) {
+            maven {
+                name repoName
+                url repoUrl
+            }
+        } else {
+            jcenter()
         }
     }
 
